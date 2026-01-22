@@ -52,6 +52,8 @@ end
 
 function InitalInvoiceEvent:readStream(streamId, connection)
 	local numInvoices = streamReadInt32(streamId)
+	print(string.format("InitalInvoiceEvent:readStream - Receiving %d invoices", numInvoices))
+	
 	for j = 0, numInvoices-1 do
         local invoice = Invoice.new()	
 
@@ -85,15 +87,21 @@ function InitalInvoiceEvent:readStream(streamId, connection)
         end
 
         table.insert(g_currentMission.invoices.invoiceList, invoice)
+        print(string.format("InitalInvoiceEvent:readStream - Loaded invoice ID %d with %d items", 
+        	invoice.id, #invoice.items))
 	end
     
 	self:run(connection)
 end
 
 function InitalInvoiceEvent:run(connection)
+	print(string.format("InitalInvoiceEvent:run - Processing on %s", 
+		connection:getIsServer() and "client" or "server"))
+	
 	if connection:getIsServer() then
         if g_currentMission.invoicesUi ~= nil then
             g_currentMission.invoicesUi:updateContent()
+            print("InitalInvoiceEvent:run - Updated invoices UI")
         end
 	end
 end

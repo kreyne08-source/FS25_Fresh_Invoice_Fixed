@@ -32,6 +32,8 @@ source(Invoices.dir .. "gui/InvoiceDetails.lua")
 source(Invoices.dir .. "gui/SelectField.lua")
 
 function Invoices:loadMap()
+	print("Invoices:loadMap - Initializing Invoice mod")
+	
 	KrSoftwareUtils.loadTextFromMod(Invoices.modName, Invoices.dir)
 	KrSoftwareUtils.mergeModTranslations(g_i18n)
 
@@ -64,7 +66,9 @@ function Invoices:loadMap()
 	FSBaseMission.saveSavegame = Utils.appendedFunction(FSBaseMission.saveSavegame, Invoices.saveToXmlFile)
 	self:loadFromXMLFile()
 
-	guiInvoices:initialize()	
+	guiInvoices:initialize()
+	
+	print(string.format("Invoices:loadMap - Initialization complete. Loaded %d work types", #self.works))
 end
 
 function Invoices:makeIsInvoicesEnabledPredicate()
@@ -312,6 +316,8 @@ addModEventListener(Invoices)
 -- call init event
 
 function Invoices:sendInitialClientState(connection, user, farm)
+	print(string.format("Invoices:sendInitialClientState - Sending initial state to client. Invoice count: %d", 
+		#g_currentMission.invoices.invoiceList))
 	connection:sendEvent(InitalInvoiceEvent.new())
 end
 
