@@ -157,6 +157,17 @@ end
 function NewInvoice:onClickSend(sender)
     print("NewInvoice:onClickSend - Starting invoice send process")
     
+    -- Validate that we have items and a selected farm
+    if self.fullList == nil or self.fullList[1] == nil or self.fullList[1].items == nil or #self.fullList[1].items == 0 then
+        print("NewInvoice:onClickSend - ERROR: No items in invoice list")
+        return
+    end
+    
+    if self.selectedFarm == nil then
+        print("NewInvoice:onClickSend - ERROR: No farm selected")
+        return
+    end
+    
     local currentFarmId = -1
     local farm = g_farmManager:getFarmByUserId(g_currentMission.playerUserId)
     if farm ~= nil then
@@ -164,6 +175,7 @@ function NewInvoice:onClickSend(sender)
         print(string.format("NewInvoice:onClickSend - Current farm ID: %d", currentFarmId))
     else
         print("NewInvoice:onClickSend - WARNING: Could not get current farm")
+        return
     end
 
     print(string.format("NewInvoice:onClickSend - Target farm ID: %s, Items count: %d", 

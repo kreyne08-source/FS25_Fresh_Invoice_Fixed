@@ -93,7 +93,8 @@ function CreateInvoiceEvent:run(connection)
 		tostring(connection:getIsServer())))
 	
 	if not connection:getIsServer() then
-		-- This is the server receiving the event from a client
+		-- We are the server (connection is from a client)
+		-- Assign ID and broadcast to all clients
 		self.invoice.id = g_currentMission.invoices:getNextId()
 		print(string.format("CreateInvoiceEvent:run - Server: Assigned invoice ID %d", self.invoice.id))
 		
@@ -105,7 +106,7 @@ function CreateInvoiceEvent:run(connection)
 		g_server:broadcastEvent(CreateInvoiceEvent.new(self.invoice))
 		print("CreateInvoiceEvent:run - Server: Broadcasted invoice to all clients")
 	else
-		-- This is a client receiving the broadcast from server
+		-- We are a client receiving a broadcast from the server
 		print(string.format("CreateInvoiceEvent:run - Client: Received invoice ID %d", self.invoice.id))
 		table.insert(g_currentMission.invoices.invoiceList, self.invoice)
 	end
