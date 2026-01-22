@@ -52,13 +52,32 @@ Improved the event handling with clear comments and better logic flow:
 
 ```lua
 if not connection:getIsServer() then
-    -- This is the server receiving the event from a client
+    -- We are the server (connection is from a client)
     self.invoice.id = g_currentMission.invoices:getNextId()
     table.insert(g_currentMission.invoices.invoiceList, self.invoice)
     g_server:broadcastEvent(CreateInvoiceEvent.new(self.invoice))
 else
-    -- This is a client receiving the broadcast from server
+    -- We are a client receiving a broadcast from the server
     table.insert(g_currentMission.invoices.invoiceList, self.invoice)
+end
+```
+
+### 4. Added Input Validation
+**File: `gui/NewInvoice.lua`**
+Added defensive validation to prevent errors:
+- Checks for valid invoice items before processing
+- Checks for selected target farm
+- Validates current farm before proceeding
+
+```lua
+if self.fullList == nil or self.fullList[1] == nil or #self.fullList[1].items == 0 then
+    print("NewInvoice:onClickSend - ERROR: No items in invoice list")
+    return
+end
+
+if self.selectedFarm == nil then
+    print("NewInvoice:onClickSend - ERROR: No farm selected")
+    return
 end
 ```
 
@@ -88,9 +107,9 @@ end
 
 ## Files Modified
 
-1. `gui/NewInvoice.lua` - Added logging to onClickSend function
+1. `gui/NewInvoice.lua` - Added logging and input validation to onClickSend function
 2. `Invoices.lua` - Fixed invoice ID assignment and added logging
-3. `events/CreateInvoiceEvent.lua` - Fixed event handler logic and added logging
+3. `events/CreateInvoiceEvent.lua` - Fixed event handler logic, improved comments, and added logging
 4. `events/InitalInvoiceEvent.lua` - Added logging for initial state sync
 5. `events/ChangeStateInvoiceEvent.lua` - Added logging for state changes
 
@@ -99,3 +118,4 @@ end
 - All logging uses the `print()` function which outputs to the game's log file
 - The fixes maintain backward compatibility with the existing save game format
 - No changes were made to the XML GUI definitions or translation files
+- Input validation prevents potential errors when UI state is inconsistent
